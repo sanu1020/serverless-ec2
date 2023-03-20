@@ -1,0 +1,45 @@
+service: ec2-aws-vm
+
+plugins:
+  - serverless-iam-roles-per-function
+
+custom:
+  stage: ${opt:stage, self:provider.stage}
+
+provider:
+  name: aws
+  runtime: nodejs16.x
+  stage: ${opt:stage, 'staging'}
+  region: ${opt:region, 'ap-southeast-2'}
+  iamRoleStatements:
+    - Effect: Allow
+      Action: "*"
+      Resource: "*"
+  
+      
+functions:
+  createVm:
+    handler: api.createVm
+    description: Handles AWS VM creation provided with necessary data
+    events:
+      - http:
+          path: aws/instances
+          method: post
+  
+  listVPC:
+    handler: api.listVPCs
+    description: Handles AWS VPC listings provided with necessary data
+    events:
+      - http:
+          path: aws/vpc
+          method: get
+
+  listSubnet:
+    handler: api.listSubnets
+    description: Handles AWS Subnets listings provided with necessary data
+    events:
+      - http:
+          path: aws/subnet
+          method: post
+
+    
